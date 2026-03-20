@@ -2,48 +2,31 @@ pipeline {
     agent none
 
     parameters {
-        string(name: 'BROWSER', defaultValue: 'chromium', description: 'Browser')
-        string(name: 'WORKERS', defaultValue: '2', description: 'Workers per machine')
-        string(name: 'ENV', defaultValue: 'dev', description: 'Environment')
-        string(name: 'MARKER', defaultValue: '', description: 'Pytest marker (smoke, regression...)')
+        string(name: 'BROWSER', defaultValue: 'chromium')
+        string(name: 'WORKERS', defaultValue: '2')
+        string(name: 'ENV', defaultValue: 'dev')
+        string(name: 'MARKER', defaultValue: '')
     }
 
     stages {
-        stage('Checkout') {
-            agent { label 'node-1' }
-            steps {
-                git branch: 'main', url: 'https://github.com/doanvanhung123/playwright_python'
-            }
-        }
-
         stage('Run Tests Parallel') {
             parallel {
 
                 stage('Machine 1') {
                     agent { label 'node-1' }
                     steps {
-                        sh """
-                        chmod +x runtest.sh
-                        ./runtest.sh \
-                          --browser ${params.BROWSER} \
-                          --workers ${params.WORKERS} \
-                          --env ${params.ENV} \
-                          -m "${params.MARKER}"
-                        """
+                        checkout scm
+                        bat "runtest.bat --browser ${params.BROWSER} --workers ${params.WORKERS} --env ${params.ENV} -m \"${params.MARKER}\""
+                        stash includes: 'allure-results/**', name: 'allure-node1'
                     }
                 }
 
                 stage('Machine 2') {
                     agent { label 'node-2' }
                     steps {
-                        sh """
-                        chmod +x runtest.sh
-                        ./runtest.sh \
-                          --browser ${params.BROWSER} \
-                          --workers ${params.WORKERS} \
-                          --env ${params.ENV} \
-                          -m "${params.MARKER}"
-                        """
+                        checkout scm
+                        bat "runtest.bat --browser ${params.BROWSER} --workers ${params.WORKERS} --env ${params.ENV} -m \"${params.MARKER}\""
+                        stash includes: 'allure-results/**', name: 'allure-node2'
                     }
                 }
             }
@@ -52,6 +35,8 @@ pipeline {
         stage('Allure Report') {
             agent { label 'node-1' }
             steps {
+                unstash 'allure-node1'
+                unstash 'allure-node2'
                 allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             }
         }
