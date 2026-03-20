@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout') {
             agent { label 'master' }
             steps {
-                git 'https://your-repo.git'
+                git 'https://github.com/doanvanhung123/playwright_python'
             }
         }
 
