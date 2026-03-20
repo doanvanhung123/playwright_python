@@ -8,10 +8,8 @@ class HomePage(BasePage):
     def __init__(self, page):
         super().__init__(page)
 
-        # ===== LOCATORS (XPath) =====
-        self.loginButton = page.locator("//li//a[@href='/login']")
+        self.login_button = page.locator("//a[@href='/login']")
 
-    # ===== ACTIONS =====
-    @allure.step("Mở trang chủ")
+    @allure.step("Click login button")
     def click_login_button(self):
-        self.click(self.loginButton)
+        self.login_button.click()
