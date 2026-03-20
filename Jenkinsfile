@@ -10,7 +10,7 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            agent { label 'master' }
+            agent { label 'Built-In Node' }
             steps {
                 git 'https://github.com/doanvanhung123/playwright_python'
             }
@@ -20,7 +20,7 @@ pipeline {
             parallel {
 
                 stage('Machine 1') {
-                    agent { label 'agent1' }
+                    agent { label 'Built-In Node' }
                     steps {
                         sh """
                         chmod +x runtest.sh
@@ -34,21 +34,7 @@ pipeline {
                 }
 
                 stage('Machine 2') {
-                    agent { label 'agent2' }
-                    steps {
-                        sh """
-                        chmod +x runtest.sh
-                        ./runtest.sh \
-                          --browser ${params.BROWSER} \
-                          --workers ${params.WORKERS} \
-                          --env ${params.ENV} \
-                          -m "${params.MARKER}"
-                        """
-                    }
-                }
-
-                stage('Machine 3') {
-                    agent { label 'agent3' }
+                    agent { label 'node-2' }
                     steps {
                         sh """
                         chmod +x runtest.sh
