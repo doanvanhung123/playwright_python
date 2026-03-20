@@ -10,7 +10,7 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            agent { label 'Built-In Node' }
+            agent { label 'node-1' }
             steps {
                 git 'https://github.com/doanvanhung123/playwright_python'
             }
@@ -20,7 +20,7 @@ pipeline {
             parallel {
 
                 stage('Machine 1') {
-                    agent { label 'Built-In Node' }
+                    agent { label 'node-1' }
                     steps {
                         sh """
                         chmod +x runtest.sh
@@ -50,7 +50,7 @@ pipeline {
         }
 
         stage('Allure Report') {
-            agent { label 'master' }
+            agent { label 'node-1' }
             steps {
                 allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             }
