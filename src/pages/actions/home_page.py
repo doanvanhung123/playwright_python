@@ -13,5 +13,5 @@ class HomePage(BasePage):
 
     # ===== ACTIONS =====
     @allure.step("Mở trang chủ")
-    def click_login_button(self, username, password):
+    def click_login_button(self):
         self.click(self.loginButton)

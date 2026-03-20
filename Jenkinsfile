@@ -16,7 +16,7 @@ pipeline {
                     agent { label 'node-1' }
                     steps {
                         checkout scm
-                        bat "runtest.bat --browser ${params.BROWSER} --workers ${params.WORKERS} --env ${params.ENV} -m \"${params.MARKER}\""
+                        bat "runtest.bat ${params.BROWSER} ${params.WORKERS} ${params.ENV} ${params.MARKER}"
                         stash includes: 'allure-results/**', name: 'allure-node1'
                     }
                 }
@@ -25,7 +25,7 @@ pipeline {
                     agent { label 'node-2' }
                     steps {
                         checkout scm
-                        bat "runtest.bat --browser ${params.BROWSER} --workers ${params.WORKERS} --env ${params.ENV} -m \"${params.MARKER}\""
+                        bat "runtest.bat ${params.BROWSER} ${params.WORKERS} ${params.ENV} ${params.MARKER}"
                         stash includes: 'allure-results/**', name: 'allure-node2'
                     }
                 }
